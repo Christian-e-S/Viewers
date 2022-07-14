@@ -59,6 +59,7 @@ async function downloadAndZip(dicomWebClient, studyInstanceUID, status) {
           status('downloading', formatBytes(pe.loaded));
         }
       },
+      mediaTypes: [{ transferSyntaxUID: '*', mediaType: 'application/dicom' }],
     });
     const zip = new JSZip();
     OHIF.log.info('Adding DICOM P10 files to archive:', buffers.length);

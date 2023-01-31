@@ -31,7 +31,8 @@ import OHIFDicomMicroscopyExtension from '@ohif/extension-dicom-microscopy';
 import OHIFDicomPDFExtension from '@ohif/extension-dicom-pdf';
 import OHIFDicomDownloaderExtension from '@ohif/extension-dicom-study-downloader';
 import OHIFDicomInstancesUploaderExtension from '@ohif/extension-dicom-instances-uploader';
-import OHIFDicomTagBrowserExtension from '@ohif/extension-dicom-tag-browser';
+import OHIFDicomTagBrowserExtensionMod from '@ohif/extension-dicom-tag-browser-mod';
+//import OHIFDicomTagBrowserExtension from '@ohif/extension-dicom-tag-browser';
 // Add this for Debugging purposes:
 //import OHIFDebuggingExtension from '@ohif/extension-debugging';
 import { version } from '../package.json';
@@ -58,7 +59,7 @@ const appProps = {
     OHIFDicomDownloaderExtension,
     OHIFDicomInstancesUploaderExtension,
     //OHIFDebuggingExtension,
-    OHIFDicomTagBrowserExtension,
+    OHIFDicomTagBrowserExtensionMod,
   ],
 };
 

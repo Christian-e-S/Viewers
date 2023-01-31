@@ -18,17 +18,21 @@ function isDisplaySetReconstructable(instances) {
   const isMultiframe = firstInstance.NumberOfFrames > 1;
 
   if (!constructableModalities.includes(Modality)) {
+    
     return { value: false };
   }
 
   // Can't reconstruct if we only have one image.
   if (!isMultiframe && instances.length === 1) {
+    
     return { value: false };
   }
 
   if (isMultiframe) {
+    
     return processMultiframe();
   } else {
+    
     return processSingleframe(instances);
   }
 }
@@ -280,6 +284,6 @@ function _getPerpendicularDistance(a, b) {
   );
 }
 
-const constructableModalities = ['MR', 'CT', 'PT', 'NM'];
+const constructableModalities = ['MR', 'CT', 'PT', 'NM', 'OT'];
 
 export { isDisplaySetReconstructable, isSpacingUniform };

@@ -1,0 +1,44 @@
+/* All the css used for this mod */
+
+.dicom-instance-group {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.dicom-tag-browser-num {
+    width: 200px;
+}
+
+.dicom-tag-browser-instance-delete {
+  margin-left: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: var(--active-color);
+  /*background-color: magenta;*/
+  border-radius: 20px;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  font-weight: bold;
+  width: 90px;
+}
+
+.dicom-tag-browser-instance-delete-disabled {
+  margin-left: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: gray;
+  border-radius: 20px;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  font-weight: bold;
+  width: 90px;
+}
+
+button.dicom-tag-browser-instance-delete:hover {
+    cursor: pointer;
+}

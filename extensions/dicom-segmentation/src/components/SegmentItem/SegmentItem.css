@@ -62,16 +62,17 @@
 }
 
 .dcmseg-segment-item .segment-label span {
-  overflow-wrap: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: calc(100% - 40px); /* calc(100% - 50px); 20px = eye icon */
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  /*white-space: nowrap;
+  overflow: hidden; */
+  max-width: calc(100% - 50px); /* calc(100% - 50px); 20px = eye icon */
+  /*text-overflow: ellipsis; */
 }
 
 .dcmseg-segment-item .segment-label .eye-icon {
   cursor: pointer;
   color: var(--active-color);
+  width: 40px;
 }
 
 .dcmseg-segment-item .segment-label .eye-icon:hover {

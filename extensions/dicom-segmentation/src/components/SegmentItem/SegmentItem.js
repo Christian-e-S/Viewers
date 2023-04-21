@@ -59,6 +59,13 @@ const SegmentItem = ({
             <a data-tip data-for={`SegmentHover${index}`}>
               <span>{label}</span>
             </a>
+            <Icon
+              className={`eye-icon ${isVisible && '--visible'}`}
+              name={isVisible ? 'eye' : 'eye-closed'}
+              width="20px"
+              height="20px"
+              onClick={onVisibilityChangeHandler}
+            />
             <ReactTooltip
               id={`SegmentHover${index}`}
               delayShow={250}
@@ -68,13 +75,6 @@ const SegmentItem = ({
             >
               <span>{label}</span>
             </ReactTooltip>
-            <Icon
-              className={`eye-icon ${isVisible && '--visible'}`}
-              name={isVisible ? 'eye' : 'eye-closed'}
-              width="20px"
-              height="20px"
-              onClick={onVisibilityChangeHandler}
-            />
           </div>
           {false && <div className="segment-info">{'...'}</div>}
           {false && (

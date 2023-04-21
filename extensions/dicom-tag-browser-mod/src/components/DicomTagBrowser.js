@@ -182,9 +182,14 @@ function DicomTagTable({ tags, meta }) {
 }
 
 function getFormattedRowsFromTags(tags, meta) {
+  //computePerpendicularPosition(tags);  // TODO: take out or fix
   const rows = [];
 
   tags.forEach(tagInfo => {
+    if (tagInfo.tag == "(0020,0037)") {
+        rows.push(['--->',
+        '', 'perpendicularPosition', `${computePerpendicularPosition(tags)}`]);
+    }
     if (tagInfo.vr === 'SQ') {
       rows.push([
         `${tagInfo.tagIndent}${tagInfo.tag}`,
@@ -380,15 +385,24 @@ function _sortTagList(tagList) {
   });
 }
 
+function getValue(tag) {
+    if (tag) {
+        return tag.value;
+    }
+    else {
+        return "undefined";
+    }
+}
+
 
 function deleteAction(DicomWebClient, tags) {
-    let StudyInstanceUID = tags.find(tag => tag.tag == "(0020,000D)").value;
-    let SeriesInstanceUID = tags.find(tag => tag.tag == "(0020,000E)").value;
-    let SOPInstanceUID = tags.find(tag => tag.tag == "(0008,0018)").value;
-    let SeriesNumber = tags.find(tag => tag.tag == "(0020,0011)").value;
-    let InstanceNumber = tags.find(tag => tag.tag == "(0020,0013)").value;
-    let Modality = tags.find(tag => tag.tag == "(0008,0060)").value;
-    let SeriesDescription = tags.find(tag => tag.tag == "(0008,103E)").value;
+    let StudyInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000D)"));
+    let SeriesInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000E)"));
+    let SOPInstanceUID = getValue(tags.find(tag => tag.tag == "(0008,0018)"));
+    let SeriesNumber = getValue(tags.find(tag => tag.tag == "(0020,0011)"));
+    let InstanceNumber = getValue(tags.find(tag => tag.tag == "(0020,0013)"));
+    let Modality = getValue(tags.find(tag => tag.tag == "(0008,0060)"));
+    let SeriesDescription = getValue(tags.find(tag => tag.tag == "(0008,103E)"));
     let confirmationMsg = (  "Are you sure you want to delete the instance\n"
                            + `Series number: ${SeriesNumber},`
                            + `    Modality: ${Modality}\n`
@@ -408,9 +422,9 @@ function deleteAction(DicomWebClient, tags) {
 
 function isDeleted(tags) {
     if (tags.length > 0) {
-        let StudyInstanceUID = tags.find(tag => tag.tag == "(0020,000D)").value;
-        let SeriesInstanceUID = tags.find(tag => tag.tag == "(0020,000E)").value;
-        let SOPInstanceUID = tags.find(tag => tag.tag == "(0008,0018)").value;
+        let StudyInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000D)"));
+        let SeriesInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000E)"));
+        let SOPInstanceUID = getValue(tags.find(tag => tag.tag == "(0008,0018)"));
         var match = deletedMemory.find(
                              del => (   del.StudyInstanceUID == StudyInstanceUID
                            && del.SeriesInstanceUID == SeriesInstanceUID
@@ -442,6 +456,24 @@ function DeleteButton ({tags, DicomWebClient}) {
                 delete&nbsp;
             </button>);
     }
+}
+
+// Section to obtain the true thickness
+function computePerpendicularPosition(tags) {
+    let ImagePosition = getValue(tags.find(tag => tag.tag == "(0020,0032)"));
+    let ImageOrientation = getValue(tags.find(tag => tag.tag == "(0020,0037)"));
+    let positions = ImagePosition.split("\\").map(parseFloat);
+    let orientations = ImageOrientation.split("\\").map(parseFloat);
+    // We need the perpendicular vector to the orientations.
+    let crossProduct = [
+        orientations[1]*orientations[5] - orientations[2]*orientations[4],
+        orientations[2]*orientations[3] - orientations[0]*orientations[5],
+        orientations[0]*orientations[4] - orientations[1]*orientations[3]
+    ];
+    // We project the position along this direction
+    return    positions[0]*crossProduct[0]
+            + positions[1]*crossProduct[1]
+            + positions[2]*crossProduct[2];
 }
 
 export default DicomTagBrowser;

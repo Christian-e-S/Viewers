@@ -1,7 +1,19 @@
-# To locally run OHIF
-APP_CONFIG=config/cs.js yarn run dev
+ To locally run OHIF
+APP_CONFIG=config/demoEMT.js yarn run dev
 
-this file referenced by APP_CONFIG is `./platform/viewer/public/config/cs.js`
+# To compile
+APP_CONFIG=config/cspacs.js yarn run build
+APP_CONFIG=config/demoEMT.js yarn run build
+APP_CONFIG=config/showcaseEMT.js yarn run build
+
+# To upload to server
+- delete the platform/viewer/dist folder
+rm -rf platform/viewer/dist
+- compile the corresponding case
+- Open Microsoft Azure Storage Explorer
+- upload inside the corresponding Blob Containers/$web folder
+
+this file referenced by APP_CONFIG is in `./platform/viewer/public/config` 
 
 # Notes to understand the OHIF viewer.
 Inside ./platform/i18n is the text information, `locales` dependent.

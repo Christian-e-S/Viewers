@@ -39,3 +39,8 @@ screenshots/
 
 # Locize settings
 .locize
+
+#configuration files
+platform/viewer/public/config/cspacs.cs
+platform/viewer/public/config/demoEMT.cs
+

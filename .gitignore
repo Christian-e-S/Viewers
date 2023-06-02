@@ -1,4 +1,8 @@
 platform/viewer/public/config/cs.js
+# Our secret configuration files
+platform/viewer/public/config/cspacs.js
+platform/viewer/public/config/demoEMT.js
+platform/viewer/public/config/showcaseEMT.js
 
 # Packages
 node_modules

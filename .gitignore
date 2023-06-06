@@ -3,6 +3,9 @@ platform/viewer/public/config/cs.js
 platform/viewer/public/config/cspacs.js
 platform/viewer/public/config/demoEMT.js
 platform/viewer/public/config/showcaseEMT.js
+# helper file
+upload.py
+
 
 # Packages
 node_modules
@@ -43,8 +46,4 @@ screenshots/
 
 # Locize settings
 .locize
-
-#configuration files
-platform/viewer/public/config/cspacs.cs
-platform/viewer/public/config/demoEMT.cs
 

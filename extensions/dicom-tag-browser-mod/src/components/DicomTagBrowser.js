@@ -8,7 +8,7 @@ import './DicomTagBrowser.css';
 import DicomBrowserSelectItem from './DicomBrowserSelectItem';
 // Modded parts
 import './mod.css'; // css of the modded version
-import deleteInstances from './DicomDeleteInstances';
+import { deleteInstance, deleteSeries, deleteStudy } from './DicomDeleteInstances';
 
 const { ImageSet } = classes;
 const { DicomMetaDictionary } = dcmjs.data;
@@ -120,7 +120,9 @@ const DicomTagBrowser = ({ displaySets, displaySetInstanceUID, DicomWebClient })
               <p className="dicom-tag-browser-num">
               Instance Number: {tags.find(tag => tag.tag == "(0020,0013)").value}
               </p>
-              <DeleteButton tags={tags} DicomWebClient={DicomWebClient}/>
+              <DeleteInstanceButton tags={tags} DicomWebClient={DicomWebClient}/>
+              <DeleteSeriesButton tags={tags} DicomWebClient={DicomWebClient}/>
+              <DeleteStudyButton tags={tags} DicomWebClient={DicomWebClient}/>
               </div>
           }
           onChange={({ target }) => {
@@ -133,7 +135,9 @@ const DicomTagBrowser = ({ displaySets, displaySetInstanceUID, DicomWebClient })
   } else { // if there is no slider, keep the delete button
       instanceSelectList = 
           (<div className="dicom-instance-group">
-              <DeleteButton tags={tags} DicomWebClient={DicomWebClient}/>
+              <DeleteInstanceButton tags={tags} DicomWebClient={DicomWebClient}/>
+              <DeleteSeriesButton tags={tags} DicomWebClient={DicomWebClient}/>
+              <DeleteStudyButton tags={tags} DicomWebClient={DicomWebClient}/>
           </div>);
   }
 
@@ -395,13 +399,13 @@ function getValue(tag) {
 }
 
 
-function deleteAction(DicomWebClient, tags) {
-    let StudyInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000D)"));
+function deleteInstanceAction(DicomWebClient, tags) {
+    let StudyInstanceUID =  getValue(tags.find(tag => tag.tag == "(0020,000D)"));
     let SeriesInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000E)"));
-    let SOPInstanceUID = getValue(tags.find(tag => tag.tag == "(0008,0018)"));
-    let SeriesNumber = getValue(tags.find(tag => tag.tag == "(0020,0011)"));
-    let InstanceNumber = getValue(tags.find(tag => tag.tag == "(0020,0013)"));
-    let Modality = getValue(tags.find(tag => tag.tag == "(0008,0060)"));
+    let SOPInstanceUID =    getValue(tags.find(tag => tag.tag == "(0008,0018)"));
+    let SeriesNumber =      getValue(tags.find(tag => tag.tag == "(0020,0011)"));
+    let InstanceNumber =    getValue(tags.find(tag => tag.tag == "(0020,0013)"));
+    let Modality =          getValue(tags.find(tag => tag.tag == "(0008,0060)"));
     let SeriesDescription = getValue(tags.find(tag => tag.tag == "(0008,103E)"));
     let confirmationMsg = (  "Are you sure you want to delete the instance\n"
                            + `Series number: ${SeriesNumber},`
@@ -410,13 +414,48 @@ function deleteAction(DicomWebClient, tags) {
                            + `Instance number: ${InstanceNumber}`
                           );
     if (confirm(confirmationMsg)) {
-        deleteInstances(DicomWebClient, 
+        deleteInstance(DicomWebClient, 
                         {StudyInstanceUID, SeriesInstanceUID, SOPInstanceUID});
         deletedMemory.push({StudyInstanceUID, SeriesInstanceUID, SOPInstanceUID});
-        let button = document.getElementById("tag-browser-delete-button");
+        let button = document.getElementById("tag-browser-delete-instance-button");
         button.className = "dicom-tag-browser-instance-delete-disabled";
-        button.innerHTML = "deleted";
+        button.innerHTML = "deleted instance";
         button.disabled = true;
+    }
+}
+
+function deleteSeriesAction(DicomWebClient, tags) {
+    let StudyInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000D)"));
+    let SeriesInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000E)"));
+    let SOPInstanceUID = getValue(tags.find(tag => tag.tag == "(0008,0018)"));
+    let SeriesNumber = getValue(tags.find(tag => tag.tag == "(0020,0011)"));
+    let Modality = getValue(tags.find(tag => tag.tag == "(0008,0060)"));
+    let SeriesDescription = getValue(tags.find(tag => tag.tag == "(0008,103E)"));
+    let confirmationMsg = (  "Are you sure you want to delete the series: "
+                           + `${SeriesNumber},`
+                           + `    Modality: ${Modality}\n`
+                           + `Series description: ${SeriesDescription}\n`
+                          );
+    if (confirm(confirmationMsg)) {
+        deleteSeries(DicomWebClient, {StudyInstanceUID, SeriesInstanceUID});
+        let button = document.getElementById("tag-browser-delete-series-button");
+        button.className = "dicom-tag-browser-instance-delete-disabled";
+        button.innerHTML = "deleted series";
+        button.disabled = true;
+    }
+}
+
+function deleteStudyAction(DicomWebClient, tags) {
+    let StudyInstanceUID = getValue(tags.find(tag => tag.tag == "(0020,000D)"));
+    let confirmationMsg = (  "Are you sure you want to delete the study?"
+                          );
+    if (confirm(confirmationMsg)) {
+        deleteStudy(DicomWebClient, {StudyInstanceUID});
+        let button = document.getElementById("tag-browser-delete-study-button");
+        button.className = "dicom-tag-browser-instance-delete-disabled";
+        button.innerHTML = "deleted study";
+        button.disabled = true;
+        window.location.reload(true)
     }
 }
 
@@ -440,20 +479,56 @@ function isDeleted(tags) {
 }
 
 // Renders a button that deactivates if the instance was already deleted
-function DeleteButton ({tags, DicomWebClient}) {
+function DeleteInstanceButton ({tags, DicomWebClient}) {
     if (isDeleted(tags)) {
         return (
-            <button id="tag-browser-delete-button"
+            <button id="tag-browser-delete-instance-button"
                     className="dicom-tag-browser-instance-delete-disabled">
                 deleted
             </button>);
     } else {
         return (
-            <button id="tag-browser-delete-button"
+            <button id="tag-browser-delete-instance-button"
                     className="dicom-tag-browser-instance-delete"
-                    onClick={()=>deleteAction(DicomWebClient, tags)}
+                    onClick={()=>deleteInstanceAction(DicomWebClient, tags)}
                     disabled={false}>
-                delete&nbsp;
+                delete instance&nbsp;
+            </button>);
+    }
+}
+
+function DeleteSeriesButton ({tags, DicomWebClient}) {
+    if (isDeleted(tags)) {
+        return (
+            <button id="tag-browser-delete-series-button"
+                    className="dicom-tag-browser-instance-delete-disabled">
+                deleted
+            </button>);
+    } else {
+        return (
+            <button id="tag-browser-delete-series-button"
+                    className="dicom-tag-browser-instance-delete"
+                    onClick={()=>deleteSeriesAction(DicomWebClient, tags)}
+                    disabled={false}>
+                delete series&nbsp;
+            </button>);
+    }
+}
+
+function DeleteStudyButton ({tags, DicomWebClient}) {
+    if (isDeleted(tags)) {
+        return (
+            <button id="tag-browser-delete-study-button"
+                    className="dicom-tag-browser-instance-delete-disabled">
+                deleted
+            </button>);
+    } else {
+        return (
+            <button id="tag-browser-delete-study-button"
+                    className="dicom-tag-browser-instance-delete"
+                    onClick={()=>deleteStudyAction(DicomWebClient, tags)}
+                    disabled={false}>
+                delete study&nbsp;
             </button>);
     }
 }

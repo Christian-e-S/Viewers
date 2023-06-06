@@ -21,7 +21,7 @@ import { api } from 'dicomweb-client';
  * @param {function} that deletes the input instance
 */
 
-function deleteInstances(DicomWebClient, DicomInstance) {
+function deleteInstance(DicomWebClient, DicomInstance) {
     const {StudyInstanceUID, SeriesInstanceUID, SOPInstanceUID} = DicomInstance;
     if (DicomWebClient instanceof api.DICOMwebClient) {
         let url = `${DicomWebClient.wadoURL}/studies/${StudyInstanceUID}`;
@@ -36,4 +36,34 @@ function deleteInstances(DicomWebClient, DicomInstance) {
     }
 }
 
-export { deleteInstances as default, deleteInstances };
+function deleteSeries(DicomWebClient, DicomInstance) {
+    const {StudyInstanceUID, SeriesInstanceUID} = DicomInstance;
+    if (DicomWebClient instanceof api.DICOMwebClient) {
+        let url = `${DicomWebClient.wadoURL}/studies/${StudyInstanceUID}`;
+        url += `/series/${SeriesInstanceUID}`;
+        let method = "delete";
+        let headers = {};
+        let options = {};
+        // The DicomWebClient has no inbuilt delete method
+        DicomWebClient._httpRequest(url, method, headers, options)
+    } else {
+        throw new Error('A valid DICOM Web Client instance is expected');
+    }
+}
+
+function deleteStudy(DicomWebClient, DicomInstance) {
+    const { StudyInstanceUID } = DicomInstance;
+    if (DicomWebClient instanceof api.DICOMwebClient) {
+        let url = `${DicomWebClient.wadoURL}/studies/${StudyInstanceUID}`;
+        let method = "delete";
+        let headers = {};
+        let options = {};
+        // The DicomWebClient has no inbuilt delete method
+        DicomWebClient._httpRequest(url, method, headers, options)
+    } else {
+        throw new Error('A valid DICOM Web Client instance is expected');
+    }
+}
+
+//export { deleteInstance as default, deleteInstance };
+export { deleteInstance, deleteSeries, deleteStudy };
